@@ -1,26 +1,143 @@
-#  Как работать с репозиторием финального задания
+# Kittygram Final
 
-## Что нужно сделать
+[![Kittygram workflow](https://github.com/amosova-elena/kittygram_final/actions/workflows/main.yml/badge.svg)](https://github.com/amosova-elena/kittygram_final/actions/workflows/main.yml)
 
-Настроить запуск проекта Kittygram в контейнерах и CI/CD с помощью GitHub Actions
+Учебный проект, выполненный в рамках курса «Python-разработчик» Яндекс Практикума.
 
-## Как проверить работу с помощью автотестов
+## Описание проекта
 
-В корне репозитория создайте файл tests.yml со следующим содержимым:
-```yaml
-repo_owner: ваш_логин_на_гитхабе
-kittygram_domain: полная ссылка (https://доменное_имя) на ваш проект Kittygram
-taski_domain: полная ссылка (https://доменное_имя) на ваш проект Taski
-dockerhub_username: ваш_логин_на_докерхабе
+Kittygram — это веб-приложение, в котором пользователи могут публиковать фотографии своих котиков, указывать их имя, год рождения, цвет и достижения.
+
+В данном репозитории реализована контейнеризация приложения с помощью Docker и автоматизирован процесс тестирования и деплоя с использованием GitHub Actions.
+
+Проект разворачивается на удалённом сервере в виде набора Docker-контейнеров:
+
+- backend (Django + Django REST Framework);
+- frontend (React);
+- gateway (Nginx);
+- PostgreSQL.
+
+При каждом пуше в ветку `main` GitHub Actions автоматически:
+
+- запускает тесты бэкенда и фронтенда;
+- проверяет код на соответствие PEP8;
+- собирает Docker-образы;
+- отправляет их в Docker Hub;
+- обновляет контейнеры на сервере;
+- выполняет миграции и сборку статики;
+- отправляет уведомление об успешном деплое в Telegram.
+
+---
+
+## Использованные технологии
+
+- Python 3.12
+- Django
+- Django REST Framework
+- PostgreSQL
+- React
+- Docker
+- Docker Compose
+- Nginx
+- GitHub Actions
+
+---
+
+## Установка и запуск проекта
+
+### Клонирование репозитория
+
+```bash
+git clone git@github.com:<ваш_логин>/kittygram_final.git
+cd kittygram_final
 ```
 
-Скопируйте содержимое файла `.github/workflows/main.yml` в файл `kittygram_workflow.yml` в корневой директории проекта.
+### Настройка переменных окружения
 
-Для локального запуска тестов создайте виртуальное окружение, установите в него зависимости из backend/requirements.txt и запустите в корневой директории проекта `pytest`.
+В корне проекта находится файл `.env.example`, содержащий пример переменных окружения.
 
-## Чек-лист для проверки перед отправкой задания
+Перед запуском проекта создайте на его основе файл `.env`:
 
-- Проект Taski доступен по доменному имени, указанному в `tests.yml`.
-- Проект Kittygram доступен по доменному имени, указанному в `tests.yml`.
-- Пуш в ветку main запускает тестирование и деплой Kittygram, а после успешного деплоя вам приходит сообщение в телеграм.
-- В корне проекта есть файл `kittygram_workflow.yml`.
+```bash
+cp .env.example .env
+```
+
+Пользователи Windows могут просто скопировать файл `.env.example` и переименовать его в `.env`.
+
+При необходимости измените значения переменных окружения в файле `.env`.
+
+### Запуск проекта
+
+```bash
+docker compose up -d
+```
+
+После запуска выполните миграции:
+
+```bash
+docker compose exec backend python manage.py migrate
+```
+
+Соберите статические файлы:
+
+```bash
+docker compose exec backend python manage.py collectstatic --noinput
+```
+
+---
+
+## Примеры запросов к API
+
+### Получить список котиков
+
+```
+GET /api/cats/
+```
+
+Ответ:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Барсик",
+    "birth_year": 2022,
+    "color": "black"
+  }
+]
+```
+
+---
+
+### Добавить котика
+
+```
+POST /api/cats/
+```
+
+Тело запроса:
+
+```json
+{
+  "name": "Мурзик",
+  "birth_year": 2023,
+  "color": "white",
+  "achievements": ["Поймал мышку"]
+}
+```
+
+---
+
+### Получить информацию о пользователе
+
+```
+GET /api/users/me/
+```
+
+---
+
+## Автор
+
+**Елена Амосова**
+
+GitHub: https://github.com/amosova-elena
