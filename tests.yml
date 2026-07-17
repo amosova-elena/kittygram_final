@@ -3,6 +3,3 @@ kittygram_domain: https://kittygram-aes.hopto.org
 taski_domain: https://taski-aes.hopto.org
 dockerhub_username: aaalien25
 vm_name: r-backend-vm-609316# В замечании ревьюера отсутствовал GitHub-логин пользователя.
-
-# В замечании ревьюера отсутствовал GitHub-логин пользователя.
-# Для проверки работы GitHub Actions репозиторий временно сделан публичным.
